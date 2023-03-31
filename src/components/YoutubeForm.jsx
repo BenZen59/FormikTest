@@ -1,74 +1,74 @@
 import React from 'react';
-import { useFormik } from 'formik';
-import * as yup from 'yup';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+
+const initialValues = {
+  name: 'Benku',
+  email: 'benkuaznable@gmail.com',
+  channel: 'benkuable',
+  comments: '',
+  address: '',
+};
+
+const onSubmit = (values) => {
+  console.log('Form data', values);
+};
+
+const validationSchema = Yup.object({
+  name: Yup.string().required('Required'),
+  email: Yup.string().email().required('Required'),
+  channel: Yup.string().required('Required'),
+});
 
 function YoutubeForm() {
-  const initialValues = {
-    name: 'Benku',
-    email: 'benkuaznable@gmail.com',
-    channel: 'benkuable',
-  };
-
-  const onSubmit = (values) => {
-    console.log('Form data', values);
-  };
-
-  const validationSchema = yup.object({
-    name: yup.string().required('Required'),
-    email: yup.string().email().required('Required'),
-    channel: yup.string().required('Required'),
-  });
-
-  const formik = useFormik({
-    initialValues,
-    onSubmit,
-    validationSchema,
-  });
-
-  console.log('Visited fiels', formik.touched);
-
   return (
-    <div>
-      <form onSubmit={formik.handleSubmit}>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={onSubmit}
+    >
+      <Form>
         <div className='form-control'>
           <label htmlFor='name'>Name</label>
-          <input
-            type='text'
-            id='name'
-            name='name'
-            {...formik.getFieldProps('name')}
-          />
-          {formik.touched.name && formik.errors.name ? (
-            <div className='error'>{formik.errors.name}</div>
-          ) : null}
+          <Field type='text' id='name' name='name' />
+          <ErrorMessage name='name' />
         </div>
         <div className='form-control'>
           <label htmlFor='name'>E-mail</label>
-          <input
-            type='email'
-            id='email'
-            name='email'
-            {...formik.getFieldProps('email')}
-          />
-          {formik.touched.email && formik.errors.name ? (
-            <div className='error'>{formik.errors.email}</div>
-          ) : null}
+          <Field type='email' id='email' name='email' />
+          <ErrorMessage name='email' />
         </div>
         <div className='form-control'>
           <label htmlFor='channel'>Channel</label>
-          <input
+          <Field
             type='text'
             id='channel'
             name='channel'
-            {...formik.getFieldProps('channel')}
+            placeholder='Youtube channel name'
           />
-          {formik.touched.channel && formik.errors.name ? (
-            <div className='error'>{formik.errors.channel}</div>
-          ) : null}
+          <ErrorMessage name='channel' />
+        </div>
+        <div className='form-control'>
+          <label htmlFor='comments'>Comments</label>
+          <Field as='textarea' id='comments' name='comments' />
+        </div>
+        <div className='form-control'>
+          <label htmlFor='address'>Address</label>
+          <Field name='address' />
+          {(props) => {
+            const { field, form, meta } = props;
+            console.log('Render props', props);
+            return (
+              <div>
+                <input type='text' id='address' {...field} />
+                {meta.touched && meta.error ? <div>{meta.error}</div> : null}
+              </div>
+            );
+          }}
         </div>
         <button>Submit</button>
-      </form>
-    </div>
+      </Form>
+    </Formik>
   );
 }
 
